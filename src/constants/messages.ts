@@ -10,4 +10,6 @@ export const MESSAGES = {
   ALBUM_DELETED: "Album deleted successfully",
   INVALID_GOOGLE_TOKEN: "Invalid Google token",
   INTERNAL_ERROR: "Internal server error",
+  FORBIDDEN: "Forbidden - you do not have permission to access this resource",
+  USER_NOT_FOUND: "User not found",
 } as const;

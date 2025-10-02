@@ -1,7 +1,7 @@
-import { UserRepository } from "../repositories/user.repository";
-import { MessageRepository } from "../repositories/message.repository";
-import { UserDocument } from "../models/user.model";
 import { MessageDocument } from "../models/message.model";
+import { UserDocument } from "../models/user.model";
+import { MessageRepository } from "../repositories/message.repository";
+import { UserRepository } from "../repositories/user.repository";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -18,5 +18,19 @@ export class UserService {
 
   async getMessages(userId: string, currentUserId: string): Promise<MessageDocument[]> {
     return this.messageRepository.findByUsers(currentUserId, userId);
+  }
+
+  async getUserDetails(userId: string): Promise<UserDocument | null> {
+    return this.userRepository.findById(userId);
+  }
+
+  async updateUserDetails(userId: string, updateData: Partial<UserDocument>): Promise<UserDocument | null> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      return null;
+    }
+    if (updateData.fullName) user.fullName = updateData.fullName;
+    if (updateData.imageUrl) user.imageUrl = updateData.imageUrl;
+    return user.save();
   }
 }

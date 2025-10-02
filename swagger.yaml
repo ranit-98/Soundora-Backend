@@ -333,32 +333,68 @@ paths:
                   $ref: '#/components/schemas/Message'
         '401':
           description: Unauthorized - No token provided or invalid token
-  /api/stats:
+  /api/users/{userId}:
     get:
-      summary: Get platform statistics (Admin only)
-      tags: [Stats]
+      summary: Get details of a specific user
+      tags: [Users]
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID
       responses:
         '200':
-          description: Platform statistics
+          description: User details
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  totalAlbums:
-                    type: number
-                  totalSongs:
-                    type: number
-                  totalUsers:
-                    type: number
-                  totalArtists:
-                    type: number
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '404':
+          description: User not found
+    put:
+      summary: Update user details
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  description: User's full name
+                imageUrl:
+                  type: string
+                  description: URL of the user's profile image
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized - No token provided or invalid token
         '403':
-          description: Unauthorized - Admin access required
+          description: Forbidden - Cannot edit another user's profile
+        '404':
+          description: User not found
 components:
   schemas:
     Song:

@@ -38,4 +38,37 @@ export class UserController {
       next(error);
     }
   }
+
+  async getUserDetails(req: CustomRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user?.id) {
+        throw new AppError(MESSAGES.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED);
+      }
+      const user = await this.userService.getUserDetails(req.params.userId);
+      if (!user) {
+        throw new AppError(MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      }
+      res.status(HTTP_STATUS.OK).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateUserDetails(req: CustomRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user?.id) {
+        throw new AppError(MESSAGES.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED);
+      }
+      if (req.user.id !== req.params.userId && !req.user.isAdmin) {
+        throw new AppError(MESSAGES.FORBIDDEN, HTTP_STATUS.FORBIDDEN);
+      }
+      const updatedUser = await this.userService.updateUserDetails(req.params.userId, req.body);
+      if (!updatedUser) {
+        throw new AppError(MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      }
+      res.status(HTTP_STATUS.OK).json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
