@@ -1,0 +1,470 @@
+openapi: 3.0.3
+info:
+  title: Music Platform API
+  version: 1.0.0
+  description: API for managing songs, albums, users, and messages with Google authentication
+servers:
+  - url: http://localhost:3001
+paths:
+  /api/auth/callback:
+    post:
+      summary: Google Authentication Callback
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Google OAuth ID token
+              required:
+                - token
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                    description: JWT token for session
+        '401':
+          description: Invalid Google token
+  /api/admin/check:
+    get:
+      summary: Check if the user is an admin
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Admin status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  admin:
+                    type: boolean
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+  /api/admin/songs:
+    post:
+      summary: Create a new song
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                artist:
+                  type: string
+                albumId:
+                  type: string
+                duration:
+                  type: number
+                audioFile:
+                  type: string
+                  format: binary
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+                - title
+                - artist
+                - duration
+                - audioFile
+                - imageFile
+      responses:
+        '201':
+          description: Song created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        '400':
+          description: Missing required files
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+  /api/admin/songs/{id}:
+    delete:
+      summary: Delete a song by ID
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Song ID
+      responses:
+        '200':
+          description: Song deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+        '404':
+          description: Song not found
+  /api/admin/albums:
+    post:
+      summary: Create a new album
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                artist:
+                  type: string
+                releaseYear:
+                  type: number
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+                - title
+                - artist
+                - releaseYear
+                - imageFile
+      responses:
+        '201':
+          description: Album created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '400':
+          description: Missing required files
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+  /api/admin/albums/{id}:
+    delete:
+      summary: Delete an album by ID
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Album ID
+      responses:
+        '200':
+          description: Album deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+        '404':
+          description: Album not found
+  /api/albums:
+    get:
+      summary: Get all albums
+      tags: [Albums]
+      responses:
+        '200':
+          description: List of albums
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Album'
+  /api/albums/{albumId}:
+    get:
+      summary: Get an album by ID
+      tags: [Albums]
+      parameters:
+        - in: path
+          name: albumId
+          required: true
+          schema:
+            type: string
+          description: Album ID
+      responses:
+        '200':
+          description: Album details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '404':
+          description: Album not found
+  /api/songs:
+    get:
+      summary: Get all songs (Admin only)
+      tags: [Songs]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+  /api/songs/featured:
+    get:
+      summary: Get featured songs
+      tags: [Songs]
+      responses:
+        '200':
+          description: List of featured songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+  /api/songs/made-for-you:
+    get:
+      summary: Get made-for-you songs
+      tags: [Songs]
+      responses:
+        '200':
+          description: List of made-for-you songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+  /api/songs/trending:
+    get:
+      summary: Get trending songs
+      tags: [Songs]
+      responses:
+        '200':
+          description: List of trending songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+  /api/users:
+    get:
+      summary: Get all users except the current user
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized - No token provided or invalid token
+  /api/users/messages/{userId}:
+    get:
+      summary: Get messages between current user and another user
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID to fetch messages for
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized - No token provided or invalid token
+  /api/stats:
+    get:
+      summary: Get platform statistics (Admin only)
+      tags: [Stats]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Platform statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalAlbums:
+                    type: number
+                  totalSongs:
+                    type: number
+                  totalUsers:
+                    type: number
+                  totalArtists:
+                    type: number
+        '401':
+          description: Unauthorized - No token provided or invalid token
+        '403':
+          description: Unauthorized - Admin access required
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        imageUrl:
+          type: string
+        audioUrl:
+          type: string
+        duration:
+          type: number
+        albumId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - title
+        - artist
+        - imageUrl
+        - audioUrl
+        - duration
+    Album:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        imageUrl:
+          type: string
+        releaseYear:
+          type: number
+        songs:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - title
+        - artist
+        - imageUrl
+        - releaseYear
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        fullName:
+          type: string
+        imageUrl:
+          type: string
+        googleId:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - fullName
+        - imageUrl
+        - googleId
+        - email
+    Message:
+      type: object
+      properties:
+        _id:
+          type: string
+        senderId:
+          type: string
+        receiverId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - senderId
+        - receiverId
+        - content
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
