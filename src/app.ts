@@ -12,16 +12,19 @@ import songRoutes from "./routes/song.route";
 import albumRoutes from "./routes/album.route";
 import statRoutes from "./routes/stat.route";
 import { HTTP_STATUS } from "./constants/httpStatus";
-
+import cookieParser from "cookie-parser";
 export const createApp = (): Express => {
   const app = express();
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: ['http://localhost:3000'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+    credentials: true, 
+  })
+);
 
-  app.use(
-    cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"],
-      credentials: true,
-    })
-  );
 
   app.use(express.json());
   app.use(

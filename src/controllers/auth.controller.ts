@@ -12,8 +12,15 @@ export class AuthController {
   async googleAuthCallback(req: Request, res: Response, next: NextFunction) {
     try {
       const { token } = req.body;
-      const { jwtToken } = await this.authService.googleAuth(token);
-      res.status(HTTP_STATUS.OK).json({ success: true, token: jwtToken });
+      console.log("Google ID token:", token);
+      const { jwtToken, userId, googleId, isAdmin } = await this.authService.googleAuth(token);
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        token: jwtToken,
+        userId,
+        googleId,
+        isAdmin,
+      });
     } catch (error) {
       next(error);
     }

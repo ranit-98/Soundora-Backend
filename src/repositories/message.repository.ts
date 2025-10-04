@@ -1,18 +1,34 @@
-import { Message, MessageDocument } from "../models/message.model";
+// repositories/message.repository.ts
+import { MessageDocument, MessageModel } from "../models/message.model";
 
 export class MessageRepository {
-  async create(messageData: Partial<MessageDocument>): Promise<MessageDocument> {
-    return Message.create(messageData);
+  async create(data: {
+    senderId: string; // _id
+    receiverId: string; // _id
+    content: string;
+    createdAt?: Date;
+  }): Promise<MessageDocument> {
+    try {
+      const message = await MessageModel.create(data);
+      return message;
+    } catch (error) {
+      console.error("Error in MessageRepository.create:", error);
+      throw new Error("Failed to create message");
+    }
   }
 
-  async findByUsers(senderId: string, receiverId: string): Promise<MessageDocument[]> {
-    return Message.find({
-      $or: [
-        { senderId, receiverId },
-        { senderId: receiverId, receiverId: senderId },
-      ],
-    })
-      .sort({ createdAt: 1 })
-      .exec();
+  async findByUsers(userId: string, otherUserId: string): Promise<MessageDocument[]> {
+    try {
+      const messages = await MessageModel.find({
+        $or: [
+          { senderId: userId, receiverId: otherUserId },
+          { senderId: otherUserId, receiverId: userId },
+        ],
+      }).sort({ createdAt: 1 });
+      return messages;
+    } catch (error) {
+      console.error("Error in MessageRepository.findByUsers:", error);
+      throw new Error("Failed to fetch messages");
+    }
   }
 }

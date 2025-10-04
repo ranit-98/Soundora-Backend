@@ -12,4 +12,7 @@ export const MESSAGES = {
   INTERNAL_ERROR: "Internal server error",
   FORBIDDEN: "Forbidden - you do not have permission to access this resource",
   USER_NOT_FOUND: "User not found",
+  ERROR : {
+    SEND_MESSAGE: "Error sending message",
+  },
 } as const;
