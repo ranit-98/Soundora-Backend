@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Music Platform API
+  title: Soundora API
   version: 1.0.0
   description: API for managing songs, albums, users, and messages with Google authentication
 servers:
