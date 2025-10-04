@@ -16,7 +16,8 @@ interface SocketMessage {
 export const initializeSocket = (server: HttpServer): void => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      // origin: "http://localhost:3000",
+      origin: "https://soundora-b66v.onrender.com",
       credentials: true,
     },
   });

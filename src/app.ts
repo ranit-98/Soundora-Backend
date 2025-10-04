@@ -18,7 +18,7 @@ export const createApp = (): Express => {
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:3000'], 
+    origin: ['http://localhost:3000','https://soundora-b66v.onrender.com'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'], 
     credentials: true, 
