@@ -8,6 +8,7 @@ export interface UserDocument extends Document {
   email: string;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin: boolean;
 }
 
 const userSchema: Schema = new Schema(
@@ -16,6 +17,7 @@ const userSchema: Schema = new Schema(
     imageUrl: { type: String, required: true },
     googleId: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
+    isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

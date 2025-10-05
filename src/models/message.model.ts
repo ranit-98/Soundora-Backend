@@ -1,9 +1,8 @@
-// models/message.model.ts
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface MessageDocument extends Document {
-  senderId: string; // _id from User
-  receiverId: string; // _id from User
+  senderId: string; 
+  receiverId: string; 
   content: string;
   createdAt: Date;
 }

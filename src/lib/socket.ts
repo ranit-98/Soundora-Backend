@@ -6,24 +6,25 @@ import { MessageDocument } from "../models/message.model";
 import { AppError } from "../middleware/error.middleware";
 import { HTTP_STATUS } from "../constants/httpStatus";
 import { MESSAGES } from "../constants/messages";
-
+import dotenv from "dotenv";
+dotenv.config();
 interface SocketMessage {
-  senderId: string; // _id from User
-  receiverId: string; // _id from User
+  senderId: string; 
+  receiverId: string; 
   content: string;
 }
 
 export const initializeSocket = (server: HttpServer): void => {
   const io = new Server(server, {
     cors: {
-      // origin: "http://localhost:3000",
-      origin: "https://soundora-b66v.onrender.com",
+     origin :process.env.FRONTEND_URL || "http://localhost:3000",
+      // origin: "https://soundora-b66v.onrender.com",
       credentials: true,
     },
   });
 
-  const userSockets = new Map<string, string>(); // Maps _id to socket.id
-  const userActivities = new Map<string, string>(); // Maps _id to activity
+  const userSockets = new Map<string, string>(); 
+  const userActivities = new Map<string, string>(); 
   const messageRepository = new MessageRepository();
 
   io.on("connection", (socket: Socket) => {

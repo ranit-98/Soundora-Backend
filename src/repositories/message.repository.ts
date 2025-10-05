@@ -3,8 +3,8 @@ import { MessageDocument, MessageModel } from "../models/message.model";
 
 export class MessageRepository {
   async create(data: {
-    senderId: string; // _id
-    receiverId: string; // _id
+    senderId: string; 
+    receiverId: string;
     content: string;
     createdAt?: Date;
   }): Promise<MessageDocument> {

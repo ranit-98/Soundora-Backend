@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
 import { protectRoute } from "../middleware/auth.middleware";
-import { HTTP_STATUS } from "../constants/httpStatus";
 
 const router = Router();
 const userController = new UserController();

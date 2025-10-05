@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { SongController } from "../controllers/song.controller";
 import { protectRoute, requireAdmin } from "../middleware/auth.middleware";
-import { HTTP_STATUS } from "../constants/httpStatus";
 
 const router = Router();
 const songController = new SongController();

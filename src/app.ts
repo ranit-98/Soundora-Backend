@@ -1,18 +1,17 @@
-import express, { Express, Request, Response } from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import express, { Express, Request, Response } from "express";
 import fileUpload from "express-fileupload";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import yaml from "yamljs";
 import { errorHandler } from "./middleware/error.middleware";
-import userRoutes from "./routes/user.route";
 import adminRoutes from "./routes/admin.route";
+import albumRoutes from "./routes/album.route";
 import authRoutes from "./routes/auth.route";
 import songRoutes from "./routes/song.route";
-import albumRoutes from "./routes/album.route";
 import statRoutes from "./routes/stat.route";
-import { HTTP_STATUS } from "./constants/httpStatus";
-import cookieParser from "cookie-parser";
+import userRoutes from "./routes/user.route";
 export const createApp = (): Express => {
   const app = express();
 app.use(cookieParser());
@@ -53,7 +52,7 @@ app.use(
   app.use("/api/albums", albumRoutes);
   app.use("/api/stats", statRoutes);
 
-  // Serve frontend in production
+ 
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(process.cwd(), "../frontend/dist")));
     app.get("*", (req: Request, res: Response) => {

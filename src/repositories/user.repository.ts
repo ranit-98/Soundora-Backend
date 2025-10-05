@@ -1,7 +1,4 @@
 import { User, UserDocument } from "../models/user.model";
-import { AppError } from "../middleware/error.middleware";
-import { HTTP_STATUS } from "../constants/httpStatus";
-import { MESSAGES } from "../constants/messages";
 
 export class UserRepository {
   async findByGoogleId(googleId: string): Promise<UserDocument | null> {
